@@ -4,8 +4,8 @@ const OrderSchema = new mongoose.Schema(
     {
         userId: {
             type: String,
-            required : true,
-            unique: true
+            required : true
+
         },
         products: [
             {
@@ -33,4 +33,4 @@ const OrderSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
-module.exports = mongoose.model("Order", OrderSchema);Order
+module.exports = mongoose.model("Order", OrderSchema);
