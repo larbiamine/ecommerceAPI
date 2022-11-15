@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Wishlist = require("../models/Wishlist");
 const Product = require("../models/Product");
-const { verifyTokenn } = require("./verifyToken");
+const { verifyToken } = require("./verifyToken");
 
 router.post("/", async (req, res) => {
   const newWishlist = new Wishlist(req.body);
@@ -14,9 +14,10 @@ router.post("/", async (req, res) => {
 });
 
 // //Get user wishlist
-router.get("/find/:userId", verifyTokenn, async (req, res) => {
+router.get("/find/:userId", verifyToken, async (req, res) => {
   try {
     if (req.user.id == req.params.userId) {
+      console.log("hereaaa");
       const wishlist = await Wishlist.findOne({ userId: req.params.userId });
       var products = [];
       for (let i in wishlist.products) {
@@ -32,7 +33,7 @@ router.get("/find/:userId", verifyTokenn, async (req, res) => {
   }
 });
 
-router.put("/edit/:userId", verifyTokenn, async (req, res) => {
+router.put("/edit/:userId", verifyToken, async (req, res) => {
   try {
     if (req.user.id == req.params.userId) {
       const updatedWishlist = await Wishlist.findOne({
@@ -41,7 +42,7 @@ router.put("/edit/:userId", verifyTokenn, async (req, res) => {
       await Wishlist.findOneAndDelete({ userId: req.params.userId });
 
       updatedWishlist.products.pop(req.product_id);
-      await wl.save();
+      await updatedWishlist.save();
 
       res.status(200).json(updatedWishlist);
     } else {
