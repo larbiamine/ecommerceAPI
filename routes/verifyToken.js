@@ -12,7 +12,6 @@ const verifyToken = (req, res, next) => {
       next();
     });
   } else {
-    console.log("here");
     return res.status(401).json("You are Not authenticated yeh");
   }
 };

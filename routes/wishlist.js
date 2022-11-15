@@ -17,7 +17,6 @@ router.post("/", async (req, res) => {
 router.get("/find/:userId", verifyToken, async (req, res) => {
   try {
     if (req.user.id == req.params.userId) {
-      console.log("hereaaa");
       const wishlist = await Wishlist.findOne({ userId: req.params.userId });
       var products = [];
       for (let i in wishlist.products) {
@@ -36,15 +35,30 @@ router.get("/find/:userId", verifyToken, async (req, res) => {
 router.put("/edit/:userId", verifyToken, async (req, res) => {
   try {
     if (req.user.id == req.params.userId) {
-      const updatedWishlist = await Wishlist.findOne({
+      const filter = {
         userId: req.params.userId,
-      });
-      await Wishlist.findOneAndDelete({ userId: req.params.userId });
+      };
+      const ws = await Wishlist.findOne(filter);
 
-      updatedWishlist.products.pop(req.product_id);
-      await updatedWishlist.save();
+      const newProducts = ws.products.filter((d) => d !== req.body.product_id);
 
-      res.status(200).json(updatedWishlist);
+      console.log(newProducts);
+
+      try {
+        await Wishlist.findOneAndUpdate(
+          filter,
+          { $set: { products: newProducts } },
+          { new: true }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      // const updatedWishlist = await Wishlist.findOneAndUpdate(filter);
+
+      // updatedWishlist.products.pop(req.product_id);
+      // await updatedWishlist.save();
+
+      res.status(200).json(newProducts);
     } else {
       res.status(500).json("not same user");
     }
