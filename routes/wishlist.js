@@ -13,16 +13,44 @@ router.post("/", async (req, res) => {
   }
 });
 
-// //Get user wishlist
+router.post("/:userId", verifyToken, async (req, res) => {
+  if (req.user.id == req.params.userId) {
+    const filter = { userId: req.params.userId };
+    const ws = await Wishlist.findOne(filter);
+
+    const exist = ws.products.some((p) => {
+      return p === req.body.productId;
+    });
+
+    if (exist) {
+      res.status(200).json("Product already exists");
+    } else {
+      const update = { $push: { products: req.body.productId } };
+      const options = { new: true };
+      try {
+        await Wishlist.findOneAndUpdate(filter, update, options);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+      res.status(200).json("Products Added To wishlist");
+    }
+  } else {
+    res.status(500).json("not same user");
+  }
+});
+
+// //Get user's wishlist
 router.get("/find/:userId", verifyToken, async (req, res) => {
   try {
     if (req.user.id == req.params.userId) {
       const wishlist = await Wishlist.findOne({ userId: req.params.userId });
       var products = [];
+
       for (let i in wishlist.products) {
         const p = await Product.findById(wishlist.products[i]);
         products.push(p);
       }
+
       res.status(200).json(products);
     } else {
       res.status(500).json("not same user");
