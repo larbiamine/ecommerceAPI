@@ -5,7 +5,6 @@ const WishlistSchema = new mongoose.Schema(
     userId: {
       type: String,
       required: true,
-      unique: true,
     },
     products: {
       type: Array,

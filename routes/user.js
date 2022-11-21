@@ -47,7 +47,7 @@ router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
-//Get all User
+//Get all Users
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
   const query = req.query.new;
   let user = null;
