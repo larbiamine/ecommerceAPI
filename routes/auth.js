@@ -1,10 +1,30 @@
 const router = require("express").Router();
 const User = require("../models/User");
 const Cart = require("../models/Cart");
+const Wishlist = require("../models/Wishlist");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 
 router.post("/register", async (req, res) => {
+  try {
+    const filterUsername = { username: req.body.username };
+    const filterEmail = { email: req.body.email };
+
+    const byUsername = await User.findOne(filterUsername);
+    const byEmail = await User.findOne(filterEmail);
+
+    if (byUsername) {
+      res.status(500).json("username already exists");
+      return;
+    }
+    if (byEmail) {
+      res.status(500).json("Email already exists");
+      return;
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+
   const newUser = new User({
     name: req.body.name,
     lastname: req.body.lastname,
@@ -31,7 +51,6 @@ router.post("/register", async (req, res) => {
     };
     const newWishlist = new Wishlist(wishlist);
     await newWishlist.save();
-
     res.status(201).json(savedUser);
   } catch (error) {
     res.status(500).json(error);
