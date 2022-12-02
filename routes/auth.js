@@ -37,6 +37,7 @@ router.post("/register", async (req, res) => {
   });
   try {
     const savedUser = await newUser.save();
+
     //Creating users cart
     const cart = {
       userId: savedUser._id,
@@ -44,6 +45,7 @@ router.post("/register", async (req, res) => {
     };
     const newCart = new Cart(cart);
     await newCart.save();
+
     //Creating User's Wishlist
     const wishlist = {
       userId: savedUser._id,
@@ -90,6 +92,26 @@ router.post("/login", async (req, res) => {
     res.status(200).json({ ...others, accessToken });
   } catch (error) {
     res.status(500).json(error);
+  }
+});
+
+router.get("/checktoken", (req, res) => {
+  const authHeader = req.headers.token;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+
+    jwt.verify(token, process.env.JWT, (err) => {
+      if (err) {
+        if (err.message === "jwt expired") {
+          return res.status(200).json("token expired");
+        } else {
+          res.status(403).json("token is not valid");
+        }
+      }
+      return res.status(200).json("token valid");
+    });
+  } else {
+    return res.status(401).json("You are Not authenticated");
   }
 });
 
