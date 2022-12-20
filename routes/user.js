@@ -50,15 +50,22 @@ router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
 //Get all Users
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
   const query = req.query.new;
-  let user = null;
+  let users = null;
   try {
     if (query) {
-      user = await User.find().sort({ _id: -1 }).limit(5);
+      users = await User.find().sort({ _id: -1 }).limit(5);
     } else {
-      user = await User.find();
+      users = await User.find();
     }
+    let newUsersList = [];
 
-    res.status(200).json(user);
+    //removing the password field
+    users.forEach((element) => {
+      const { password, ...others } = element._doc;
+      newUsersList.push(others);
+    });
+
+    res.status(200).json(newUsersList);
   } catch (error) {
     res.status(500).json(error);
   }

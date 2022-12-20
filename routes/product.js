@@ -38,11 +38,23 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
+router.post("/deletemany", verifyTokenAndAdmin, async (req, res) => {
+  try {
+    const products = req.body.products;
+    products.forEach(async (element) => {
+      await Product.findByIdAndDelete(element);
+    });
+    // await Product.findByIdAndDelete(req.params.id);
+    res.status(200).json("Products deleted");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 // //Get Product
 router.get("/find/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    console.log(product);
     res.status(200).json(product);
   } catch (error) {
     res.status(500).json(error);
