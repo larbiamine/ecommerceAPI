@@ -1,5 +1,5 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const path = require('path');
 const dotenv = require("dotenv");
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
@@ -8,14 +8,17 @@ const cartRoutes = require("./routes/cart");
 const wishlistRoutes = require("./routes/wishlist");
 const orderRoutes = require("./routes/order");
 const stripeRoutes = require("./routes/stripe");
-const cors = require("cors");
-dotenv.config();
-const app = express();
 
+//mongodb Config
+const mongoose = require("mongoose");
 mongoose
   .connect(process.env.DATABASE_CONNECTION)
   .then(() => console.log("Database Connected"))
   .catch((error) => console.log(error));
+
+const cors = require("cors");
+dotenv.config();
+const app = express();
 
 app.use(express.json());
 app.use(
@@ -23,6 +26,10 @@ app.use(
     origin: ["http://localhost:3000", "http://localhost:3001"],
   })
 );
+app.get("/",(req, res)=>{
+  //res.status(200).json("hello there");
+  res.sendFile(path.join(__dirname+'/index.html'));
+})
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/products", productRoutes);

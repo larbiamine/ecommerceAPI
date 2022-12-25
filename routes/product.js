@@ -63,7 +63,6 @@ router.get("/find/:id", async (req, res) => {
 
 router.post("/activate", async (req, res) => {
   try {
-    console.log("yey");
     const pr = await Product.updateMany({}, { status: true }, { multi: true });
 
     res.status(200).json(pr);
