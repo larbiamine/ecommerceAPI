@@ -9,7 +9,8 @@ const wishlistRoutes = require("./routes/wishlist");
 const orderRoutes = require("./routes/order");
 const stripeRoutes = require("./routes/stripe");
 
-console.log(process.env.DATABASE_CONNECTION);
+const ORIGIN = process.env.ORIGIN_AUTHORISATION;
+
 //mongodb Config
 const mongoose = require("mongoose");
 mongoose
@@ -24,7 +25,7 @@ const app = express();
 app.use(express.json());
 app.use(
 	cors({
-		origin: ["http://localhost:3000", "http://localhost:3001"],
+		origin: [ORIGIN],
 	})
 );
 app.get("/", (req, res) => {
